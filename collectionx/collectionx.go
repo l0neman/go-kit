@@ -1,21 +1,21 @@
 package collectionx
 
-// IsEmpty 切片是否为空
+// IsEmpty checks if the slice is empty
 func IsEmpty[T any](source []T) bool {
 	return source == nil || len(source) == 0
 }
 
-// Append 将数据添加到切片
+// Append adds data to the slice
 func Append[T any](slice *[]T, a ...T) {
 	*slice = append(*slice, a...)
 }
 
-// SliceOf 快速获取切片
+// SliceOf quickly obtains a slice
 func SliceOf[T any](a ...T) *[]T {
 	return &a
 }
 
-// SetOf 快速创建 Set
+// SetOf quickly creates a Set
 func SetOf[T comparable](ts ...T) Set[T] {
 	return NewSetWithSlice(ts)
 }

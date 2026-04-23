@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// LoopTask 管理定时任务的执行
+// LoopTask manages the execution of scheduled tasks
 type LoopTask struct {
 	ticker *time.Ticker
 	ctx    context.Context
@@ -15,7 +15,7 @@ type LoopTask struct {
 	stop   bool
 }
 
-// NewLoopTask 创建新的循环任务
+// NewLoopTask creates a new loop task
 func NewLoopTask(interval time.Duration) *LoopTask {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &LoopTask{
@@ -26,7 +26,7 @@ func NewLoopTask(interval time.Duration) *LoopTask {
 	}
 }
 
-// Start 启动循环任务
+// Start starts the loop task
 func (t *LoopTask) Start(task func()) {
 	t.lock.Lock()
 	if t.stop {
@@ -48,7 +48,7 @@ func (t *LoopTask) Start(task func()) {
 	}
 }
 
-// Stop 停止任务，停止后将不能再次启动
+// Stop stops the task, it cannot be started again after stopping
 func (t *LoopTask) Stop() {
 	t.lock.Lock()
 	defer t.lock.Unlock()
@@ -68,7 +68,7 @@ func (t *LoopTask) Close() error {
 	return nil
 }
 
-// Reset 重置任务执行间隔
+// Reset resets the task execution interval
 func (t *LoopTask) Reset(interval time.Duration) {
 	t.lock.Lock()
 	defer t.lock.Unlock()

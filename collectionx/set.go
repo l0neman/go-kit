@@ -1,6 +1,6 @@
 package collectionx
 
-// 定义一个空结构体作为 map 的值类型，因为它不占用内存空间
+// Defines an empty struct as the value type for map, since it takes no memory space
 type void struct{}
 
 type Set[T comparable] interface {
@@ -12,12 +12,12 @@ type Set[T comparable] interface {
 	ToSlice() []T
 }
 
-// MapSet 实现 Set
+// MapSet implements Set
 type MapSet[T comparable] struct {
 	Values map[T]void `json:"Values"`
 }
 
-// NewSet 创建一个新的 Set
+// NewSet creates a new Set
 func NewSet[T comparable]() Set[T] {
 	return &MapSet[T]{
 		Values: make(map[T]void),
@@ -36,33 +36,33 @@ func NewSetWithSlice[T comparable](ts []T) Set[T] {
 	}
 }
 
-// Add 向 Set 中添加元素
+// Add adds an element to the Set
 func (ms *MapSet[T]) Add(value T) {
 	ms.Values[value] = void{}
 }
 
-// Remove 从 Set 中删除元素
+// Remove removes an element from the Set
 func (ms *MapSet[T]) Remove(value T) {
 	delete(ms.Values, value)
 }
 
-// Contains 检查元素是否存在于 Set 中
+// Contains checks if an element exists in the Set
 func (ms *MapSet[T]) Contains(value T) bool {
 	_, ok := ms.Values[value]
 	return ok
 }
 
-// Size 返回 Set 中的元素数量
+// Size returns the number of elements in the Set
 func (ms *MapSet[T]) Size() int {
 	return len(ms.Values)
 }
 
-// Clear 清空 Set
+// Clear clears the Set
 func (ms *MapSet[T]) Clear() {
 	ms.Values = make(map[T]void)
 }
 
-// ToSlice 将 Set 中的元素转换为切片
+// ToSlice converts elements in the Set to a slice
 func (ms *MapSet[T]) ToSlice() []T {
 	slice := make([]T, 0, len(ms.Values))
 	for key := range ms.Values {

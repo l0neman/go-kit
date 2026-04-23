@@ -7,7 +7,7 @@ import (
 func TestNewSet(t *testing.T) {
 	s := NewSet[int]()
 
-	// 验证初始状态
+	// Verify initial state
 	if s.Size() != 0 {
 		t.Errorf("Initial size should be 0, got %d", s.Size())
 	}
@@ -20,12 +20,12 @@ func TestNewSet(t *testing.T) {
 func TestSet_AddAndContains(t *testing.T) {
 	s := NewSet[int]()
 
-	// 测试添加元素
+	// Test adding elements
 	s.Add(1)
 	s.Add(2)
 	s.Add(3)
 
-	// 测试包含元素
+	// Test containing elements
 	if !s.Contains(1) {
 		t.Error("Set should contain 1")
 	}
@@ -36,7 +36,7 @@ func TestSet_AddAndContains(t *testing.T) {
 		t.Error("Set should contain 3")
 	}
 
-	// 测试不包含的元素
+	// Test elements not contained
 	if s.Contains(4) {
 		t.Error("Set should not contain 4")
 	}
@@ -48,10 +48,10 @@ func TestSet_Remove(t *testing.T) {
 	s.Add(2)
 	s.Add(3)
 
-	// 删除元素
+	// Remove element
 	s.Remove(2)
 
-	// 验证删除后的状态
+	// Verify state after removal
 	if !s.Contains(1) {
 		t.Error("Set should still contain 1")
 	}
@@ -66,19 +66,19 @@ func TestSet_Remove(t *testing.T) {
 func TestSet_Size(t *testing.T) {
 	s := NewSet[int]()
 
-	// 初始大小应为 0
+	// Initial size should be 0
 	if s.Size() != 0 {
 		t.Errorf("Initial size should be 0, got %d", s.Size())
 	}
 
-	// 添加元素后
+	// After adding elements
 	s.Add(1)
 	s.Add(2)
 	if s.Size() != 2 {
 		t.Errorf("Size should be 2, got %d", s.Size())
 	}
 
-	// 删除元素后
+	// After removing elements
 	s.Remove(1)
 	if s.Size() != 1 {
 		t.Errorf("Size should be 1 after removal, got %d", s.Size())
@@ -90,10 +90,10 @@ func TestSet_Clear(t *testing.T) {
 	s.Add(1)
 	s.Add(2)
 
-	// 清空集合
+	// Clear set
 	s.Clear()
 
-	// 验证清空后的状态
+	// Verify state after clearing
 	if s.Size() != 0 {
 		t.Errorf("Size should be 0 after clear, got %d", s.Size())
 	}
@@ -110,12 +110,12 @@ func TestSet_ToSlice(t *testing.T) {
 
 	slice := s.ToSlice()
 
-	// 验证切片长度
+	// Verify slice length
 	if len(slice) != 3 {
 		t.Errorf("Slice length should be 3, got %d", len(slice))
 	}
 
-	// 验证切片包含所有元素
+	// Verify slice contains all elements
 	found := make(map[int]bool)
 	for _, v := range slice {
 		found[v] = true
@@ -127,30 +127,30 @@ func TestSet_ToSlice(t *testing.T) {
 }
 
 func TestNewSetWithSlice(t *testing.T) {
-	// 使用切片创建集合
-	s := NewSetWithSlice([]int{1, 2, 3, 3}) // 注意有重复元素
+	// Create set from slice
+	s := NewSetWithSlice([]int{1, 2, 3, 3}) // Note: has duplicate elements
 
-	// 验证集合大小（应该自动去重）
+	// Verify set size (should automatically remove duplicates)
 	if s.Size() != 3 {
 		t.Errorf("Set size should be 3 (duplicates removed), got %d", s.Size())
 	}
 
-	// 验证包含的元素
+	// Verify contained elements
 	if !s.Contains(1) || !s.Contains(2) || !s.Contains(3) {
 		t.Error("Set should contain elements 1, 2, and 3")
 	}
 }
 
 func TestSetOf(t *testing.T) {
-	// 使用可变参数创建集合
-	s := SetOf(1, 2, 3, 3) // 注意有重复元素
+	// Create set from variadic parameters
+	s := SetOf(1, 2, 3, 3) // Note: has duplicate elements
 
-	// 验证集合大小（应该自动去重）
+	// Verify set size (should automatically remove duplicates)
 	if s.Size() != 3 {
 		t.Errorf("Set size should be 3 (duplicates removed), got %d", s.Size())
 	}
 
-	// 验证包含的元素
+	// Verify contained elements
 	if !s.Contains(1) || !s.Contains(2) || !s.Contains(3) {
 		t.Error("Set should contain elements 1, 2, and 3")
 	}

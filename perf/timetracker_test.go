@@ -9,41 +9,41 @@ import (
 func TestTimeTracker_NewTimeTracker(t *testing.T) {
 	tracker := NewTimeTracker()
 	if tracker == nil {
-		t.Error("NewTimeTracker 返回了 nil")
+		t.Error("NewTimeTracker returned nil")
 		return
 	}
 
-	// 检查是否成功初始化了 timePoint
+	// Check if timePoint was successfully initialized
 	if tracker.timePoint.IsZero() {
-		t.Error("TimeTracker 的 timePoint 未正确初始化")
+		t.Error("TimeTracker's timePoint was not correctly initialized")
 	}
 }
 
 func TestTimeTracker_RecordTime(t *testing.T) {
 	tracker := NewTimeTracker()
 
-	// 记录初始时间
+	// Record initial time
 	tracker.RecordTime()
 
-	// 等待一小段时间
+	// Wait a short period of time
 	time.Sleep(10 * time.Millisecond)
 
-	// 再次记录时间
+	// Record time again
 	tracker.RecordTime()
 
-	// 验证时间点是否已更新
+	// Verify that the time point has been updated
 	if tracker.timePoint.IsZero() {
-		t.Error("RecordTime 未正确更新时间点")
+		t.Error("RecordTime did not correctly update the time point")
 	}
 }
 
 func TestTimeTracker_TrackTime(t *testing.T) {
 	tracker := NewTimeTracker()
 
-	// 等待一小段时间以确保有可测量的时间差
+	// Wait a short period of time to ensure measurable time difference
 	time.Sleep(50 * time.Millisecond)
 
-	// 使用回调函数捕获结果
+	// Use callback function to capture result
 	var capturedElapsed time.Duration
 	var capturedFormatted string
 
@@ -52,19 +52,19 @@ func TestTimeTracker_TrackTime(t *testing.T) {
 		capturedFormatted = formattedElapsed
 	})
 
-	// 验证是否捕获到了非零的耗时
+	// Verify that a non-zero elapsed time was captured
 	if capturedElapsed <= 0 {
-		t.Errorf("期望捕获到正的耗时，但得到: %v", capturedElapsed)
+		t.Errorf("Expected positive elapsed time, got: %v", capturedElapsed)
 	}
 
-	// 验证格式化后的字符串不为空
+	// Verify the formatted string is not empty
 	if capturedFormatted == "" {
-		t.Error("格式化后的时间为空")
+		t.Error("Formatted time is empty")
 	}
 
-	// 验证格式化后的字符串包含原始毫秒数
-	if !strings.HasSuffix(capturedFormatted, "毫秒") {
-		t.Error("格式化后的字符串不包含原始毫秒数信息")
+	// Verify the formatted string contains original milliseconds
+	if !strings.HasSuffix(capturedFormatted, "ms") {
+		t.Error("Formatted string does not contain original milliseconds information")
 	}
 }
 
@@ -75,24 +75,24 @@ func TestTimeTracker_formatElapsedTime(t *testing.T) {
 		expected string
 	}{
 		{
-			name:     "毫秒级别",
+			name:     "millisecond level",
 			duration: 150 * time.Millisecond,
-			expected: "150 毫秒",
+			expected: "150 ms",
 		},
 		{
-			name:     "秒级别",
-			duration: 1250 * time.Millisecond, // 1秒250毫秒
-			expected: "1 秒 250 毫秒（原始：1250 毫秒）",
+			name:     "second level",
+			duration: 1250 * time.Millisecond, // 1 second 250 milliseconds
+			expected: "1 second 250 ms (raw: 1250 ms)",
 		},
 		{
-			name:     "分钟级别",
-			duration: 61500 * time.Millisecond, // 1分1秒500毫秒
-			expected: "1 分钟 1 秒 500 毫秒（原始：61500 毫秒）",
+			name:     "minute level",
+			duration: 61500 * time.Millisecond, // 1 minute 1 second 500 milliseconds
+			expected: "1 minute 1 second 500 ms (raw: 61500 ms)",
 		},
 		{
-			name:     "超过1分钟",
-			duration: 125 * time.Second, // 2分5秒
-			expected: "2 分钟 5 秒 0 毫秒（原始：125000 毫秒）",
+			name:     "over 1 minute",
+			duration: 125 * time.Second, // 2 minutes 5 seconds
+			expected: "2 minutes 5 seconds 0 ms (raw: 125000 ms)",
 		},
 	}
 
@@ -102,7 +102,7 @@ func TestTimeTracker_formatElapsedTime(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := tracker.formatElapsedTime(tt.duration)
 			if result != tt.expected {
-				t.Errorf("formatElapsedTime() = %v, 期望 %v", result, tt.expected)
+				t.Errorf("formatElapsedTime() = %v, expected %v", result, tt.expected)
 			}
 		})
 	}

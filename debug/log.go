@@ -9,22 +9,22 @@ import (
 
 var throttledLog *ThrottledLog
 
-const stackOffset = 4 // 栈偏移
+const stackOffset = 4 // stack offset
 
 // for ThrottledLog
 func init() {
 	throttledLog = &ThrottledLog{callCount: map[string]int{}}
 }
 
-// ThrottledLog 智能处理频繁打印的日志
+// ThrottledLog intelligently handles frequently printed logs
 type ThrottledLog struct {
 	mu        sync.Mutex
 	callCount map[string]int
 }
 
-// Print 打印日志，根据降频优化
+// Print prints the log with throttling optimization
 func (sl *ThrottledLog) Print(logFun func(count int)) {
-	// 构建调用者信息的唯一 key
+	// Build unique key for caller information
 	callerKey := makeKeyWithStackInfo(stackOffset)
 	sl.mu.Lock()
 	defer sl.mu.Unlock()
@@ -44,15 +44,15 @@ func makeKeyWithStackInfo(stackOffset int) string {
 }
 
 func (sl *ThrottledLog) countLogAndCanLog(key string) (int, bool) {
-	// 获取调用次数
+	// Get call count
 	count := sl.callCount[key]
 	count++
 	sl.callCount[key] = count
-	// 2 4 8 16 ... 采用 2 的 n 次方进行打印
+	// 2 4 8 16 ... Use powers of 2 for printing
 	return count, count&(count-1) == 0
 }
 
-// PrintThrottled 智能打印日志
+// PrintThrottled prints logs intelligently
 func PrintThrottled(logFun func(count int)) {
 	throttledLog.Print(logFun)
 }

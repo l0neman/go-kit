@@ -14,16 +14,16 @@ import (
 type Visitor struct {
 }
 
-// VisitField 访问并检查每一个字段
+// VisitField visits and checks each field
 func (v *Visitor) VisitField(ctx *structure.FieldContext) error {
-	// 从 tag 中获取检查表达式
+	// Get check expression from tag
 	exp := ctx.Tag("check")
 	if exp == "" {
-		// 如果没有 check 标签，则跳过检查
+		// Skip check if no check tag is present
 		return nil
 	}
 
-	// 获取字段名，优先使用 json 标签
+	// Get field name, prefer json tag
 	fieldName := ctx.Tag("json")
 	if fieldName == "" {
 		fieldName = ctx.FieldName()
@@ -35,66 +35,66 @@ func (v *Visitor) VisitField(ctx *structure.FieldContext) error {
 
 	rules, err := parseExp(exp)
 	if err != nil {
-		return fmt.Errorf("字段 '%s' %v，路径 > %s", fieldName, err, ctx.Path())
+		return fmt.Errorf("field '%s' %v, path > %s", fieldName, err, ctx.Path())
 	}
 
 	for _, r := range rules {
 		op, valStr := r.op, r.valStr
 
-		// 根据字段类型执行校验
+		// Perform validation based on field type
 		switch ctx.Kind() {
 		case reflect.String:
 			val := ctx.Value().(string)
 			switch op {
 			case expressNotEmpty:
 				if val == "" {
-					return fmt.Errorf("字段 '%s' 不能为空，路径 > %s", fieldName, ctx.Path())
+					return fmt.Errorf("field '%s' cannot be empty, path > %s", fieldName, ctx.Path())
 				}
 			case expressEmpty:
 				if val != "" {
-					return fmt.Errorf("字段 '%s' 必须为空，路径 > %s", fieldName, ctx.Path())
+					return fmt.Errorf("field '%s' must be empty, path > %s", fieldName, ctx.Path())
 				}
 			default:
-				return fmt.Errorf("字段 '%s' 是字符串类型，不支持 '%s' 表达式，路径 > %s", fieldName, op, ctx.Path())
+				return fmt.Errorf("field '%s' is of string type, does not support '%s' expression, path > %s", fieldName, op, ctx.Path())
 			}
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			fieldVal := reflect.ValueOf(ctx.Value()).Int()
 			checkVal, err := strconv.ParseInt(valStr, 10, 64)
 			if err != nil {
-				return fmt.Errorf("字段 '%s' 的检查值 '%s' 类型错误，期望为整数，路径 > %s", fieldName, valStr, ctx.Path())
+				return fmt.Errorf("field '%s' check value '%s' has incorrect type, expected integer, path > %s", fieldName, valStr, ctx.Path())
 			}
 			if !compareInt(fieldVal, checkVal, op) {
-				return fmt.Errorf("字段 '%s' 的值 '%d' 不满足条件 '%s%s'，路径 > %s", fieldName, fieldVal, op, valStr, ctx.Path())
+				return fmt.Errorf("field '%s' value '%d' does not satisfy condition '%s%s', path > %s", fieldName, fieldVal, op, valStr, ctx.Path())
 			}
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 			fieldVal := reflect.ValueOf(ctx.Value()).Uint()
 			checkVal, err := strconv.ParseUint(valStr, 10, 64)
 			if err != nil {
-				return fmt.Errorf("字段 '%s' 的检查值 '%s' 类型错误，期望为无符号整数，路径 > %s", fieldName, valStr, ctx.Path())
+				return fmt.Errorf("field '%s' check value '%s' has incorrect type, expected unsigned integer, path > %s", fieldName, valStr, ctx.Path())
 			}
 			if !compareUint(fieldVal, checkVal, op) {
-				return fmt.Errorf("字段 '%s' 的值 '%d' 不满足条件 '%s%s'，路径 > %s", fieldName, fieldVal, op, valStr, ctx.Path())
+				return fmt.Errorf("field '%s' value '%d' does not satisfy condition '%s%s', path > %s", fieldName, fieldVal, op, valStr, ctx.Path())
 			}
 		case reflect.Float32, reflect.Float64:
 			fieldVal := reflect.ValueOf(ctx.Value()).Float()
 			checkVal, err := strconv.ParseFloat(valStr, 64)
 			if err != nil {
-				return fmt.Errorf("字段 '%s' 的检查值 '%s' 类型错误，期望为浮点数，路径 > %s", fieldName, valStr, ctx.Path())
+				return fmt.Errorf("field '%s' check value '%s' has incorrect type, expected float, path > %s", fieldName, valStr, ctx.Path())
 			}
 
 			if !compareFloat(fieldVal, checkVal, op) {
-				return fmt.Errorf("字段 '%s' 的值 '%f' 不满足条件 '%s%s'，路径 > %s", fieldName, fieldVal, op, valStr, ctx.Path())
+				return fmt.Errorf("field '%s' value '%f' does not satisfy condition '%s%s', path > %s", fieldName, fieldVal, op, valStr, ctx.Path())
 			}
 		default:
-			// 对于不支持的类型，可以选择忽略或报错
-			// return fmt.Errorf("字段 '%s' 是不支持的类型 '%s'，无法进行检查，路径 > %s", fieldName, ctx.Kind(), ctx.Path())
+			// For unsupported types, you can choose to ignore or report an error
+			// return fmt.Errorf("field '%s' is of unsupported type '%s', cannot perform check, path > %s", fieldName, ctx.Kind(), ctx.Path())
 		}
 	}
 
 	return nil
 }
 
-// compareInt 比较整数
+// compareInt compares integers
 func compareInt(a, b int64, op string) bool {
 	switch op {
 	case expressionGreaterThan:
@@ -114,7 +114,7 @@ func compareInt(a, b int64, op string) bool {
 	}
 }
 
-// compareUint 比较无符号整数
+// compareUint compares unsigned integers
 func compareUint(a, b uint64, op string) bool {
 	switch op {
 	case expressionGreaterThan:
@@ -134,7 +134,7 @@ func compareUint(a, b uint64, op string) bool {
 	}
 }
 
-// compareFloat 比较浮点数
+// compareFloat compares floating point numbers
 func compareFloat(a, b float64, op string) bool {
 	switch op {
 	case expressionGreaterThan:
@@ -202,7 +202,7 @@ func parseExp(exp string) ([]rule, error) {
 		} else if singleExp == expressEmpty {
 			op = expressEmpty
 		} else {
-			return nil, fmt.Errorf("的检查表达式 '%s' 无效", singleExp)
+			return nil, fmt.Errorf("invalid check expression '%s'", singleExp)
 		}
 
 		rules = append(rules, rule{op: op, valStr: valStr})
@@ -223,10 +223,10 @@ const (
 	expressEmpty                = "is_empty"
 )
 
-// CheckFields 检查结构体字段
-// obj: 要检查的结构体对象
-// 返回值: 如果有错误，返回错误信息；如果没有错误，返回 nil
-// 结构体字段增加 check 标签，值为表达式，例如:
+// CheckFields checks struct fields
+// obj: the struct object to check
+// Return value: returns error message if there is an error; returns nil if there is no error
+// Add check tag to struct fields with expression as value, for example:
 // `check:"not_empty"`
 // `check:">0,<=100"`
 // `check:"==10"`
@@ -234,7 +234,7 @@ func CheckFields(obj any) error {
 	parser := structure.NewParser(&Visitor{})
 	err := parser.Parse(obj)
 	if err != nil {
-		return errorx.Wrap(err, "检查出错")
+		return errorx.Wrap(err, "check error")
 	}
 
 	return nil

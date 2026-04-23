@@ -29,14 +29,14 @@ func TestCheckFields(t *testing.T) {
 			input: &struct {
 				Name string `check:"not_empty"`
 			}{""},
-			wantErr: "字段 'Name' 不能为空",
+			wantErr: "field 'Name' cannot be empty",
 		},
 		{
 			name: "String Is Empty Fail",
 			input: &struct {
 				Name string `check:"is_empty"`
 			}{"not empty"},
-			wantErr: "字段 'Name' 必须为空",
+			wantErr: "field 'Name' must be empty",
 		},
 		{
 			name: "String Is Empty Success",
@@ -50,49 +50,49 @@ func TestCheckFields(t *testing.T) {
 			input: &struct {
 				Age int `check:">=18"`
 			}{17},
-			wantErr: "不满足条件 '>=18'",
+			wantErr: "does not satisfy condition '>=18'",
 		},
 		{
 			name: "Int Greater Than Fail",
 			input: &struct {
 				Age int `check:"<60"`
 			}{60},
-			wantErr: "不满足条件 '<60'",
+			wantErr: "does not satisfy condition '<60'",
 		},
 		{
 			name: "Int Not Equal Fail",
 			input: &struct {
 				Code int `check:"!=0"`
 			}{0},
-			wantErr: "不满足条件 '!=0'",
+			wantErr: "does not satisfy condition '!=0'",
 		},
 		{
 			name: "Int Equal Fail",
 			input: &struct {
 				Code int `check:"==1"`
 			}{2},
-			wantErr: "不满足条件 '==1'",
+			wantErr: "does not satisfy condition '==1'",
 		},
 		{
 			name: "Multiple Checks Fail",
 			input: &struct {
 				Age int `check:">18, <30"`
 			}{35},
-			wantErr: "不满足条件 '<30'",
+			wantErr: "does not satisfy condition '<30'",
 		},
 		{
 			name: "Float Less Than Or Equal Fail",
 			input: &struct {
 				Price float64 `check:"<=99.9"`
 			}{100.0},
-			wantErr: "不满足条件 '<=99.9'",
+			wantErr: "does not satisfy condition '<=99.9'",
 		},
 		{
 			name: "Nested Struct Fail",
 			input: &struct {
 				Data Nested
 			}{Nested{Value: 5}},
-			wantErr: "不满足条件 '>10'",
+			wantErr: "does not satisfy condition '>10'",
 		},
 		{
 			name: "Nested Struct Success",
@@ -106,28 +106,28 @@ func TestCheckFields(t *testing.T) {
 			input: &struct {
 				Data *Nested
 			}{&Nested{Value: 5}},
-			wantErr: "不满足条件 '>10'",
+			wantErr: "does not satisfy condition '>10'",
 		},
 		{
 			name: "Invalid Expression",
 			input: &struct {
 				Name string `check:"invalid_op"`
 			}{"test"},
-			wantErr: "检查表达式 'invalid_op' 无效",
+			wantErr: "invalid check expression 'invalid_op'",
 		},
 		{
 			name: "Mismatched Type In Expression",
 			input: &struct {
 				Age int `check:">abc"`
 			}{25},
-			wantErr: "检查值 'abc' 类型错误",
+			wantErr: "check value 'abc' has incorrect type",
 		},
 		{
 			name: "Unsupported Expression For Type",
 			input: &struct {
 				Name string `check:">10"`
 			}{"test"},
-			wantErr: "字符串类型，不支持 '>' 表达式",
+			wantErr: "is of string type, does not support '>' expression",
 		},
 	}
 

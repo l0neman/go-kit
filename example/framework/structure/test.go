@@ -11,41 +11,41 @@ type SubConfigA struct {
 	TTL  int    `yaml:"ttl" default:"60"`
 }
 
-// SubConfigB 是另一个子结构体，用于指针和切片
+// SubConfigB is another sub struct, used for pointers and slices
 type SubConfigB struct {
 	Endpoint string   `yaml:"endpoint" default:"https://api.example.com/v2"`
 	Enabled  bool     `yaml:"enabled" default:"true"`
-	Params   []string `yaml:"params" default:"[\"a\", \"b\"]"` // default 标签对切片无效，setField 未实现
+	Params   []string `yaml:"params" default:"[\"a\", \"b\"]"` // default tag is invalid for slices, setField not implemented
 }
 
-// ComplexConfig 是我们的主要测试目标
+// ComplexConfig is our main test target
 type ComplexConfig struct {
-	// 简单字段
+	// Simple fields
 	AppName string `yaml:"app_name" default:"Super-App"`
 	Version string `yaml:"version" default:"1.0.0"`
 
-	// 嵌套结构体（值类型）
+	// Nested struct (value type)
 	PrimaryDB SubConfigA `yaml:"primary_db"`
 
-	// 指向结构体的指针（可能为 nil）
+	// Pointer to struct (may be nil)
 	Cache *SubConfigA `yaml:"cache"`
 
-	// 包含结构体值的切片
-	// 注意：为了测试，我们需要在实例中预先分配一些空的元素
+	// Slice containing struct values
+	// Note: For testing, we need to pre-allocate some empty elements in the instance
 	ValueSlice []SubConfigA `yaml:"value_slice"`
 
-	// 包含结构体指针的切片
-	// 注意：同样需要预分配
+	// Slice containing struct pointers
+	// Note: Also needs pre-allocation
 	PointerSlice []*SubConfigB `yaml:"pointer_slice"`
 
-	// 值为结构体的 Map
+	// Map with struct values
 	ValueMap map[string]SubConfigA `yaml:"value_map"`
 
-	// 值为结构体指针的 Map
+	// Map with struct pointer values
 	PointerMap map[string]*SubConfigB `yaml:"pointer_map"`
 }
 
-// Key 为 ComplexConfig 提供一个自定义的键名
+// Key provides a custom key name for ComplexConfig
 func (c *ComplexConfig) Key() string {
 	return "complex_application_config"
 }
