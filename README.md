@@ -1,5 +1,7 @@
 # Go Kit
 
+中文 | [English](./README_en.md)
+
 Go Kit 是一个轻量级的 Go 工具集。提供了一些常用的工具函数。
 
 ## 模块概览
